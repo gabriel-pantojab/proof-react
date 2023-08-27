@@ -22,3 +22,7 @@
 .btn-delete {
   background-color: tomato;
 }
+
+.task.completed {
+  opacity: 0.5;
+}

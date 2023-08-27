@@ -37,6 +37,22 @@ function App() {
     });
   };
 
+  const doneTask = (id: number) => {
+    const task = tasks.find((task) => task.id === id);
+    if (task) {
+      task.state = StateTask.COMPLETED;
+      setTasks([...tasks]);
+    }
+  };
+
+  const undoTask = (id: number) => {
+    const task = tasks.find((task) => task.id === id);
+    if (task) {
+      task.state = StateTask.PEDDING;
+      setTasks([...tasks]);
+    }
+  };
+
   return (
     <>
       <header>
@@ -52,7 +68,14 @@ function App() {
 
           <ul className="task-list">
             {tasks.length > 0 ? (
-              tasks.map((task) => <Task key={task.id} {...task} />)
+              tasks.map((task) => (
+                <Task
+                  key={task.id}
+                  {...task}
+                  doneTask={doneTask}
+                  undoTaks={undoTask}
+                />
+              ))
             ) : (
               <li className="task-empty">
                 <h3>No hay tareas</h3>
