@@ -21,7 +21,9 @@ export default function Task({ id, name, state }: TaskProps) {
     >
       <h3 className="task-title">{name}</h3>
       <div className="actions-task">
-        <button className="btn-done">Completar</button>
+        <button className="btn-done">
+          {state === StateTask.PEDDING ? "Completar" : "Deshacer"}
+        </button>
         <button className="btn-delete">Eliminar</button>
       </div>
     </li>

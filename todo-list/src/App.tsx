@@ -1,10 +1,41 @@
 import { useState } from "react";
 import "./App.css";
 import Task from "./components/task/Task";
-import { Task as TaskModel } from "./model/models";
+import { StateTask, Task as TaskModel } from "./model/models";
+import Swal from "sweetalert2";
 
 function App() {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
+
+  const addTask = ({ name }: { name: string }) => {
+    const id = Date.now();
+    const newTask: TaskModel = {
+      id,
+      name,
+      state: StateTask.PEDDING,
+    };
+    setTasks([newTask, ...tasks]);
+  };
+
+  const handleAddTask = () => {
+    Swal.fire({
+      title: "Nueva tarea",
+      input: "text",
+      inputLabel: "Nombre de la tarea",
+      inputPlaceholder: "Ingrese el nombre de la tarea",
+      showCancelButton: true,
+      confirmButtonText: "Agregar",
+      cancelButtonText: "Cancelar",
+      showLoaderOnConfirm: true,
+      preConfirm: (name) => {
+        if (!name) {
+          Swal.showValidationMessage("El nombre es requerido");
+        }
+        addTask({ name });
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  };
 
   return (
     <>
@@ -13,11 +44,19 @@ function App() {
       </header>
       <main>
         <section className="container-todo-list">
+          <div className="actions">
+            <button className="btn-add" onClick={handleAddTask}>
+              Nueva Tarea
+            </button>
+          </div>
+
           <ul className="task-list">
             {tasks.length > 0 ? (
               tasks.map((task) => <Task key={task.id} {...task} />)
             ) : (
-              <li className="task-empty">No hay tareas</li>
+              <li className="task-empty">
+                <h3>No hay tareas</h3>
+              </li>
             )}
           </ul>
         </section>

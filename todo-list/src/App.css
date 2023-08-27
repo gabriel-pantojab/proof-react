@@ -21,7 +21,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 1rem;
 
   border-radius: 1rem;
@@ -34,5 +33,14 @@
   max-width: 600px;
 }
 
-.task-empty {
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-add {
+  background-color: #64e8a8;
 }
