@@ -4,9 +4,62 @@ import Task from "./components/task/Task";
 import { StateTask, Task as TaskModel } from "./model/models";
 import Swal from "sweetalert2";
 import { sortTasks } from "./utils";
+import { addTasks } from "./storage/localStorage";
+
+function handleAddTask({
+  addTask,
+}: {
+  addTask: ({ name }: { name: string }) => void;
+}) {
+  Swal.fire({
+    title: "Nueva tarea",
+    input: "text",
+    inputLabel: "Nombre de la tarea",
+    inputPlaceholder: "Ingrese el nombre de la tarea",
+    showCancelButton: true,
+    confirmButtonText: "Agregar",
+    cancelButtonText: "Cancelar",
+    showLoaderOnConfirm: true,
+    preConfirm: (name) => {
+      if (!name) {
+        Swal.showValidationMessage("El nombre es requerido");
+      }
+      addTask({ name });
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  });
+}
+
+function handleDeleteTask({
+  deleteTask,
+  id,
+}: {
+  deleteTask: (id: number) => void;
+  id: number;
+}) {
+  Swal.fire({
+    title: "Eliminar tarea",
+    text: "¿Está seguro de eliminar la tarea?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteTask(id);
+      Swal.fire("Eliminado", "La tarea ha sido eliminada", "success");
+    }
+  });
+}
 
 function App() {
-  const [tasks, setTasks] = useState<TaskModel[]>([]);
+  const [tasks, setTasks] = useState<TaskModel[]>(() => {
+    const tasks = localStorage.getItem("tasks");
+    if (tasks) {
+      return JSON.parse(tasks);
+    }
+    return [];
+  });
 
   const addTask = ({ name }: { name: string }) => {
     const id = Date.now();
@@ -15,27 +68,9 @@ function App() {
       name,
       state: StateTask.PEDDING,
     };
-    setTasks([newTask, ...tasks]);
-  };
-
-  const handleAddTask = () => {
-    Swal.fire({
-      title: "Nueva tarea",
-      input: "text",
-      inputLabel: "Nombre de la tarea",
-      inputPlaceholder: "Ingrese el nombre de la tarea",
-      showCancelButton: true,
-      confirmButtonText: "Agregar",
-      cancelButtonText: "Cancelar",
-      showLoaderOnConfirm: true,
-      preConfirm: (name) => {
-        if (!name) {
-          Swal.showValidationMessage("El nombre es requerido");
-        }
-        addTask({ name });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    });
+    const temp = [newTask, ...tasks];
+    addTasks({ tasks: temp });
+    setTasks(temp);
   };
 
   const doneTask = (id: number) => {
@@ -44,6 +79,7 @@ function App() {
     if (task) {
       task.state = StateTask.COMPLETED;
       temp = sortTasks({ tasks: temp });
+      addTasks({ tasks: temp });
       setTasks([...temp]);
     }
   };
@@ -64,22 +100,6 @@ function App() {
     setTasks([...temp]);
   };
 
-  const handleDeleteTask = (id: number) => {
-    Swal.fire({
-      title: "Eliminar tarea",
-      text: "¿Está seguro de eliminar la tarea?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteTask(id);
-        Swal.fire("Eliminado", "La tarea ha sido eliminada", "success");
-      }
-    });
-  };
-
   return (
     <>
       <header>
@@ -88,7 +108,12 @@ function App() {
       <main>
         <section className="container-todo-list">
           <div className="actions">
-            <button className="btn-add" onClick={handleAddTask}>
+            <button
+              className="btn-add"
+              onClick={() => {
+                handleAddTask({ addTask });
+              }}
+            >
               Nueva Tarea
             </button>
           </div>
@@ -101,7 +126,9 @@ function App() {
                   {...task}
                   doneTask={doneTask}
                   undoTaks={undoTask}
-                  deleteTask={handleDeleteTask}
+                  deleteTask={() => {
+                    handleDeleteTask({ deleteTask, id: task.id });
+                  }}
                 />
               ))
             ) : (
