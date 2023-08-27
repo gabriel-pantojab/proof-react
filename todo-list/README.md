@@ -28,7 +28,7 @@ git clone https://github.com/gabriel-pantojab/proof-react.git
 **2.** Ingresar a la carpeta del proyecto.
 
 ```bash
-cd todo-list
+cd proof-react/todo-list
 ```
 
 **3.** Instalar las dependencias.
