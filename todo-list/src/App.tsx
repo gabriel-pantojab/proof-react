@@ -3,6 +3,7 @@ import "./App.css";
 import Task from "./components/task/Task";
 import { StateTask, Task as TaskModel } from "./model/models";
 import Swal from "sweetalert2";
+import { sortTasks } from "./utils";
 
 function App() {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
@@ -38,18 +39,22 @@ function App() {
   };
 
   const doneTask = (id: number) => {
-    const task = tasks.find((task) => task.id === id);
+    let temp = [...tasks];
+    const task = temp.find((task) => task.id === id);
     if (task) {
       task.state = StateTask.COMPLETED;
-      setTasks([...tasks]);
+      temp = sortTasks({ tasks: temp });
+      setTasks([...temp]);
     }
   };
 
   const undoTask = (id: number) => {
-    const task = tasks.find((task) => task.id === id);
+    let temp = [...tasks];
+    const task = temp.find((task) => task.id === id);
     if (task) {
       task.state = StateTask.PEDDING;
-      setTasks([...tasks]);
+      temp = sortTasks({ tasks: temp });
+      setTasks([...temp]);
     }
   };
 
