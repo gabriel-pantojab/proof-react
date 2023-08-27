@@ -6,6 +6,7 @@ interface TaskProps {
   state: StateTask;
   doneTask: (id: number) => void;
   undoTaks: (id: number) => void;
+  deleteTask: (id: number) => void;
 }
 
 enum StateTask {
@@ -19,6 +20,7 @@ export default function Task({
   state,
   doneTask,
   undoTaks,
+  deleteTask,
 }: TaskProps) {
   return (
     <li
@@ -41,7 +43,14 @@ export default function Task({
         >
           {state === StateTask.PEDDING ? "Completar" : "Deshacer"}
         </button>
-        <button className="btn-delete">Eliminar</button>
+        <button
+          className="btn-delete"
+          onClick={() => {
+            deleteTask(id);
+          }}
+        >
+          Eliminar
+        </button>
       </div>
     </li>
   );

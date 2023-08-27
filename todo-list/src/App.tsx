@@ -58,6 +58,28 @@ function App() {
     }
   };
 
+  const deleteTask = (id: number) => {
+    let temp = [...tasks];
+    temp = temp.filter((task) => task.id !== id);
+    setTasks([...temp]);
+  };
+
+  const handleDeleteTask = (id: number) => {
+    Swal.fire({
+      title: "Eliminar tarea",
+      text: "¿Está seguro de eliminar la tarea?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteTask(id);
+        Swal.fire("Eliminado", "La tarea ha sido eliminada", "success");
+      }
+    });
+  };
+
   return (
     <>
       <header>
@@ -79,6 +101,7 @@ function App() {
                   {...task}
                   doneTask={doneTask}
                   undoTaks={undoTask}
+                  deleteTask={handleDeleteTask}
                 />
               ))
             ) : (
