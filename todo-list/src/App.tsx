@@ -1,26 +1,11 @@
+import { useState } from "react";
 import "./App.css";
-import Task from "./components/Task";
-import { Task as TaskModel, StateTask } from "./model/models";
-
-const tasks: TaskModel[] = [
-  {
-    id: 1,
-    name: "Tarea 1",
-    state: StateTask.PEDDING,
-  },
-  {
-    id: 2,
-    name: "Tarea 2",
-    state: StateTask.COMPLETED,
-  },
-  {
-    id: 3,
-    name: "Tarea 3",
-    state: StateTask.PEDDING,
-  },
-];
+import Task from "./components/task/Task";
+import { Task as TaskModel } from "./model/models";
 
 function App() {
+  const [tasks, setTasks] = useState<TaskModel[]>([]);
+
   return (
     <>
       <header>
@@ -28,10 +13,12 @@ function App() {
       </header>
       <main>
         <section className="container-todo-list">
-          <ul>
-            {tasks.map((task) => (
-              <Task key={task.id} {...task} />
-            ))}
+          <ul className="task-list">
+            {tasks.length > 0 ? (
+              tasks.map((task) => <Task key={task.id} {...task} />)
+            ) : (
+              <li className="task-empty">No hay tareas</li>
+            )}
           </ul>
         </section>
       </main>
